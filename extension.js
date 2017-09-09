@@ -80,8 +80,8 @@ function hover2translate() {
                 preSelection = selection;
                 let texts = selection.split(/\s+/);
                 if (texts.length < 4) {
-                    // 词或短语时                    
-                    return translatebyYouDao(selection).then(function (result) {
+                    // 词或短语时
+                    return translatebyGoogle(selection).then(function (result) {
                             preResult = result;
                             return new vscode.Hover({language:"markdown",value:result});
                         }).catch(function(err){
@@ -93,31 +93,13 @@ function hover2translate() {
                     texts.forEach(function(v){
                         encodeText += encodeURI(v)+' '
                     });
-                    // console.log("encodeText",encodeText);
-                    
-                    // return translatebyBaiDu(encodeText).then(function (result) {
-                    //     preResult = result;
-                    //     return new vscode.Hover({language:"markdown",value:"[BaiDu]: \n"+result+"\n----------\nHello"});
-                    // }).catch(function(err){
-                    //     console.log(err);
-                    // });
 
                     var translations = {};
-                    return translatebyBing(encodeText).then(function (result) {
-                        // preResult = result;
-                        console.log(result);
-                        translations["Bing"]=result;
-                        return translatebyBaiDu(encodeText);
-                        // return result;
-                        // return new vscode.Hover({language:"markdown",value:"[BaiDu]: \n"+result+"\n----------\nHello"});
-                    }).then(function (result) {
-                        console.log(result);
-                        translations["Baidu"]=result;
-                        return translatebyGoogle(encodeText);
-                    }).then(function (result) {
+                    return translatebyGoogle(encodeText).then(function (result) {
                         console.log(result);
                         translations["Google"]=result;
-                    }) .then(function () {
+                        return result;
+                    }).then(function () {
                         let allResult = "";
                         for (var key in translations) {
                             if (translations.hasOwnProperty(key)) {
@@ -132,7 +114,7 @@ function hover2translate() {
                         console.log(err);
                         return new vscode.Hover({language:"markdown",value:"出错了"});
                     });
-                    
+
                 }
 
             } else {
@@ -143,7 +125,7 @@ function hover2translate() {
                     return new vscode.Hover({language:"markdown",value:preResult});
                 }
             }
-            
+
 		}
 	});
 }
@@ -225,7 +207,7 @@ function translatebyGoogle(text) {
 
 function translatebyBing(text) {
     // bing
-    
+
     return new Promise(function (resolve,reject) {
         // 获取cookie
         var j = request.jar()
@@ -239,7 +221,7 @@ function translatebyBing(text) {
             let id = hashCode(text);
             let postData = [{"id":id,"text":text}];
             // console.log(postData);
-            
+
             let bing_options = {
                 body: postData,
                 json: true,
