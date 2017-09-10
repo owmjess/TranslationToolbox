@@ -73,31 +73,21 @@ function hover2translate() {
 			// 不可以获取选取的内容，而只是hover的内容
 			// let text=document.getText(document.getWordRangeAtPosition(position));
 			// 获取当前选择的内容
-			let selection = document.getText(vscode.window.activeTextEditor.selection);
+			let selection = document.getText(vscode.window.activeTextEditor.selection)
             console.log("selection:",selection);
             console.log("preSelection:",preSelection);
-            if (selection != "" && selection != " " && selection != preSelection) {
+            if (selection != "" && selection != " ") {
                 preSelection = selection;
-                let texts = selection.split(/\s+/);
-                if (texts.length < 4) {
-                    // 词或短语时
-                    return translatebyGoogle(selection).then(function (result) {
-                            preResult = result;
-                            return new vscode.Hover({language:"markdown",value:result});
-                        }).catch(function(err){
-                            console.log(err);
-                        });
+                // let texts = selection.split(/\s+/);
+                if (false) {
+
                 } else {
                     // 句子时
-                    var encodeText="";
-                    texts.forEach(function(v){
-                        encodeText += encodeURI(v)+' '
-                    });
-
+                    var encodeText=selection;
                     var translations = {};
-                    return translatebyGoogle(encodeText).then(function (result) {
+                    return translatebyBing(encodeText).then(function (result) {
                         console.log(result);
-                        translations["Google"]=result;
+                        translations["Bing"]=result;
                         return result;
                     }).then(function () {
                         let allResult = "";
